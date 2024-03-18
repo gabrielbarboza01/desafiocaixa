@@ -9,44 +9,94 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-public class CadastroClientes extends Application {
+import java.util.HashMap;
+
+// Classe para representar um cliente
+class Cliente {
+    private String cpf;
+    private String nome;
+    private String endereco;
+    private String telefone;
+
+    public Cliente(String cpf, String nome, String endereco, String telefone) {
+        this.cpf = cpf;
+        this.nome = nome;
+        this.endereco = endereco;
+        this.telefone = telefone;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+}
+
+// Classe para a tabela hash
+class TabelaHash {
+    private HashMap<String, Cliente> tabela;
+
+    public TabelaHash() {
+        tabela = new HashMap<>();
+    }
+
+    // Método para inserir um cliente na tabela
+    public void inserir(Cliente cliente) {
+        tabela.put(cliente.getCpf(), cliente);
+    }
+
+    // Método para buscar um cliente pelo CPF na tabela
+    public Cliente buscar(String cpf) {
+        return tabela.get(cpf);
+    }
+}
+
+public class Main extends Application {
+    private TabelaHash tabelaHash;
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Cadastro de Clientes");
+        tabelaHash = new TabelaHash();
 
-        GridPane grid = new GridPane();
-        grid.setPadding(new Insets(20, 20, 20, 20));
-        grid.setVgap(10);
-        grid.setHgap(10);
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
 
-        Label nameLabel = new Label("Nome:");
-        GridPane.setConstraints(nameLabel, 0, 0);
-        TextField nameInput = new TextField();
-        nameInput.setPromptText("Digite o nome");
-        GridPane.setConstraints(nameInput, 1, 0);
+        TextField cpfField = new TextField();
+        Button buscarButton = new Button("Buscar");
+        Label resultadoLabel = new Label("");
 
-        Label emailLabel = new Label("Email:");
-        GridPane.setConstraints(emailLabel, 0, 1);
-        TextField emailInput = new TextField();
-        emailInput.setPromptText("Digite o email");
-        GridPane.setConstraints(emailInput, 1, 1);
+        gridPane.add(new Label("CPF:"), 0, 0);
+        gridPane.add(cpfField, 1, 0);
+        gridPane.add(buscarButton, 2, 0);
+        gridPane.add(resultadoLabel, 0, 1, 3, 1);
 
-        Button addButton = new Button("Adicionar");
-        GridPane.setConstraints(addButton, 1, 2);
-
-        grid.getChildren().addAll(nameLabel, nameInput, emailLabel, emailInput, addButton);
-
-        addButton.setOnAction(e -> {
-            // Aqui você pode adicionar a lógica para salvar os dados do cliente
-            String nome = nameInput.getText();
-            String email = emailInput.getText();
-            System.out.println("Cliente adicionado: " + nome + ", " + email);
-            nameInput.clear();
-            emailInput.clear();
+        buscarButton.setOnAction(e -> {
+            String cpf = cpfField.getText();
+            Cliente cliente = tabelaHash.buscar(cpf);
+            if (cliente != null) {
+                resultadoLabel.setText("Cliente encontrado:\n" +
+                        "Nome: " + cliente.getNome() + "\n" +
+                        "Endereço: " + cliente.getEndereco() + "\n" +
+                        "Telefone: " + cliente.getTelefone());
+            } else {
+                resultadoLabel.setText("Cliente com CPF " + cpf + " não encontrado.");
+            }
         });
 
-        Scene scene = new Scene(grid, 300, 200);
+        Scene scene = new Scene(gridPane, 400, 150);
+        primaryStage.setTitle("Busca de Cliente por CPF");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
