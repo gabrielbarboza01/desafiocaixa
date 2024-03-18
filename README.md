@@ -1,79 +1,57 @@
 # desafiocaixa
-import java.util.LinkedList;
 
-// Classe cliente
-class Cliente {
-    String cpf;
-    String nome;
-    String endereco;
-    String telefone;
+import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 
-    public Cliente(String cpf, String nome, String endereco, String telefone) {
-        this.cpf = cpf;
-        this.nome = nome;
-        this.endereco = endereco;
-        this.telefone = telefone;
+public class CadastroClientes extends Application {
+
+    @Override
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Cadastro de Clientes");
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(20, 20, 20, 20));
+        grid.setVgap(10);
+        grid.setHgap(10);
+
+        Label nameLabel = new Label("Nome:");
+        GridPane.setConstraints(nameLabel, 0, 0);
+        TextField nameInput = new TextField();
+        nameInput.setPromptText("Digite o nome");
+        GridPane.setConstraints(nameInput, 1, 0);
+
+        Label emailLabel = new Label("Email:");
+        GridPane.setConstraints(emailLabel, 0, 1);
+        TextField emailInput = new TextField();
+        emailInput.setPromptText("Digite o email");
+        GridPane.setConstraints(emailInput, 1, 1);
+
+        Button addButton = new Button("Adicionar");
+        GridPane.setConstraints(addButton, 1, 2);
+
+        grid.getChildren().addAll(nameLabel, nameInput, emailLabel, emailInput, addButton);
+
+        addButton.setOnAction(e -> {
+            // Aqui você pode adicionar a lógica para salvar os dados do cliente
+            String nome = nameInput.getText();
+            String email = emailInput.getText();
+            System.out.println("Cliente adicionado: " + nome + ", " + email);
+            nameInput.clear();
+            emailInput.clear();
+        });
+
+        Scene scene = new Scene(grid, 300, 200);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
-}
 
-// Classe tabela hash
-class TabelaHash {
-    private static final int TAMANHO_TABELA = 1000;
-    private LinkedList<Cliente>[] tabela;
-
-    public TabelaHash() {
-        tabela = new LinkedList[TAMANHO_TABELA];
-    }
-
-// Função de hash simples (soma dos caracteres do CPF)
-    private int hash(String cpf) {
-        int soma = 0;
-        for (int i = 0; i < cpf.length(); i++) {
-            soma += cpf.charAt(i);
-        }
-        return soma % TAMANHO_TABELA;
-    }
-
-// Método para inserir um cliente na tabela
-    public void inserir(Cliente cliente) {
-        int indice = hash(cliente.cpf);
-        if (tabela[indice] == null) {
-            tabela[indice] = new LinkedList<>();
-        }
-        tabela[indice].add(cliente);
-    }
-
-// Método para buscar um cliente pelo CPF na tabela
-    public Cliente buscar(String cpf) {
-        int indice = hash(cpf);
-        if (tabela[indice] != null) {
-            for (Cliente cliente : tabela[indice]) {
-                if (cliente.cpf.equals(cpf)) {
-                    return cliente;
-                }
-            }
-        }
-        return null;
-    }
-}
-
-public class Main {
     public static void main(String[] args) {
-        TabelaHash tabelaHash = new TabelaHash();
-
-    // Exemplo de inserção de clientes na tabela
-        tabelaHash.inserir(new Cliente("123.456.789-00", "Gabriel", "Rua A, 123", "123456789"));
-        tabelaHash.inserir(new Cliente("987.654.321-00", "Natanael", "Rua B, 456", "987654321"));
-
-    // Exemplo de busca por cliente pelo CPF
-        Cliente clienteEncontrado = tabelaHash.buscar("123.456.789-00");
-        if (clienteEncontrado != null) {
-            System.out.println("Cliente encontrado:");
-            System.out.println("Nome: " + clienteEncontrado.nome);
-            System.out.println("Endereço: " + clienteEncontrado.endereco);
-            System.out.println("Telefone: " + clienteEncontrado.telefone);
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
+        launch(args);
     }
 }
